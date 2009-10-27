@@ -55,7 +55,7 @@ class CIJoe
       check_project
       @joe = CIJoe.new(options.project_path)
 
-      CIJoe::Campfire.activate
+      CIJoe::Email.activate
     end
 
     def self.start(host, port, project_path)
