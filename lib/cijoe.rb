@@ -23,7 +23,7 @@ require 'cijoe/version'
 require 'cijoe/config'
 require 'cijoe/commit'
 require 'cijoe/build'
-require 'cijoe/campfire'
+require 'cijoe/email'
 require 'cijoe/server'
 
 class CIJoe
