@@ -14,9 +14,9 @@
 # Seriously, I'm gonna be nuts about keeping this simple.
 
 begin
-  require 'open4'
+  require 'systemu'
 rescue LoadError
-  abort "** Please install open4"
+  abort "** Please install systemu"
 end
 
 require 'cijoe/version'
@@ -97,12 +97,11 @@ class CIJoe
     build.sha = git_sha
     write_build 'current', build
 
-    status = Open4.popen4(runner_command) do |pid, stdin, stdout, stderr|
+    status, stdout, stderr = systemu(runner_command) do |pid|
       build.pid = pid
-      write_build 'current', build
-      err, out = stderr.read.strip, stdout.read.strip
+      write_build 'current', build  
     end
-
+    err, out = stderr, stdout
     status.exitstatus.to_i == 0 ? build_worked(out) : build_failed(out, err)
   rescue Object => e
     build_failed('', e.to_s)
