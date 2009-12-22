@@ -208,5 +208,6 @@ pre.terminal {
 pre.terminal code {
   font-family: 'Bitstream Vera Sans Mono', 'Courier', monospace;
   background-color: #333;
+  font-size: 12px;
 }
 
