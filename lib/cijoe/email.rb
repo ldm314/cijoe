@@ -17,6 +17,8 @@ class CIJoe
         puts "\tuser = horst"
         puts "\tpass = passw0rd"
         puts "\thost = mail.example.com"
+        puts "\tauthtype = plain"
+        puts "\tenabletls = 1"
       end
     end
 
@@ -25,12 +27,14 @@ class CIJoe
         :to        => Config.email.to.to_s, 
         :user      => Config.email.user.to_s,
         :pass      => Config.email.pass.to_s,
-        :host      => Config.email.host.to_s
+        :host      => Config.email.host.to_s,
+        :auth_type => Config.email.authtype.to_s,
+        :enable_tls => Config.email.enabletls.to_s
       }
     end
 
     def self.valid_config?
-      %w( host user pass to ).all? do |key|
+      %w( host user pass to auth_type ).all? do |key|
         !config[key.intern].empty?
       end
     end
@@ -39,11 +43,24 @@ class CIJoe
       options = {
         :to => Email.config[:to],
         :from => Email.config[:to],
-        :subject => 'Build failed',
-        :body => "The commit #{commit.url} causes the build to fail."
+        :subject => "(#{project}) Build failed",
+        :body => mail_body
       }
-      MmMail.send(options) if failed?
+      MmMail.mail(options, mail_config) if failed?
     end
 
+    def mail_config
+      config = MmMail::Transport::Config.new
+      config.auth_user = Email.config[:user]
+      config.auth_pass = Email.config[:pass]
+      config.auth_type = Email.config[:auth_type].to_sym
+      config.host = Email.config[:host]
+      config.enable_tls = Email.config[:enable_tls] == "1" ? true : false
+      config
+    end
+    
+    def mail_body
+      "The commit '#{commit.message}' (#{commit.url}) by #{commit.author} caused the build to fail."
+    end
   end
 end

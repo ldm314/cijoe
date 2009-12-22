@@ -2,6 +2,7 @@
 # http://github.com/lsegal/mmmail/ 
 
 require 'net/smtp'
+require File.expand_path(File.dirname(__FILE__) + '/smtp_tls')
 
 module MmMail
   # General exception class when something goes wrong in MmMail
@@ -29,6 +30,9 @@ module MmMail
     class Config
       # Set/get the SMTP host/port information
       attr_accessor :host, :port
+
+      # Enable TLS
+      attr_accessor :enable_tls
       
       # Set/get the authentication type (nil for none, :plain, :login or :cram_md5)
       attr_accessor :auth_type
@@ -105,6 +109,7 @@ module MmMail
     # 
     # @param [#to_s] message the message to send
     def mail_smtp(message)
+      Net::SMTP.enable_tls if config.enable_tls
       Net::SMTP.start(config.host, config.port, 'localhost.localdomain', 
           config.auth_user, config.auth_pass, config.auth_type) do |smtp|
         smtp.send_message(message.to_s, message.from, message.recipients_list)

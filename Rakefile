@@ -8,7 +8,7 @@ begin
   require 'cijoe/version'
 
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "langalex-cijoe"
+    gemspec.name = "mattmatt-cijoe"
     gemspec.summary = "CI Joe is a simple Continuous Integration server."
     gemspec.description = "CI Joe is a simple Continuous Integration server."
     gemspec.email = "chris@ozmm.org"
