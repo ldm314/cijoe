@@ -3,6 +3,15 @@
   <head>
     <link href="<%= cijoe_root %>/screen.css" media="screen" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="<%= cijoe_root %>/favicon.ico" type="image/x-icon" />
+    <script type="text/javascript">
+      function toggle(id){
+        ID = document.getElementById(id);
+        if(ID.style.display == "")
+          ID.style.display = "none";
+        else
+          ID.style.display = "";
+      }
+    </script>
     <title><%= h(joe.project) %>: CI Joe</title>
   </head>
   <body>
@@ -27,12 +36,19 @@
           <% else %>
             <li><form method="POST"><input type="submit" value="Build"/></form></li>
           <% end %>
-          
-          <% if joe.last_build %>
-            <li><span class="date"><%= pretty_time(joe.last_build.finished_at) %></span> &raquo; Built <a href="<%= joe.url %>/commits/<%= joe.last_build.sha %>"><%= joe.last_build.short_sha %></a> <span class="<%= joe.last_build.status %>">(<%= joe.last_build.status %>)</span></li>
-            <% if joe.last_build.failed? %>
-              <li><pre class="terminal"><code><%=ansi_color_codes h(joe.last_build.output) %></code></pre></li>
+          <% i = 0 %>
+          <% joe.old_builds.each do |build| %>
+            <li>
+                <span class="date"><%= pretty_time(build.finished_at) %></span> &raquo; Built <a href="<%= joe.url %>/commits/<%= build.sha %>"><%= build.short_sha %></a>
+                <span class="<%= build.status %>">(<%= build.status %>)</span>
+                <% if build.failed? %>
+                <span> &nbsp; <a href="#" onclick="toggle('<%= "build#{i}" %>')">Show/Hide log</a></span>
+                <% end %>
+            </li>
+            <% if build.failed? %>
+              <li id="<%= "build#{i}" %>" style="display:none;"><pre class="terminal"><code><%=ansi_color_codes h(build.output) %></code></pre><br/></li>
             <% end %>
+            <% i = i + 1 %>
           <% end %>
         </ul>
       </div>

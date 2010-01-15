@@ -27,7 +27,7 @@ require 'cijoe/email'
 require 'cijoe/server'
 
 class CIJoe
-  attr_reader :user, :project, :url, :current_build, :last_build
+  attr_reader :user, :project, :url, :current_build, :old_builds
 
   def initialize(project_path)
     project_path = File.expand_path(project_path)
@@ -36,7 +36,7 @@ class CIJoe
     @user, @project = git_user_and_project
     @url = "http://github.com/#{@user}/#{@project}"
 
-    @last_build = nil
+    @old_builds = []
     @current_build = nil
 
     trap("INT") { stop }
@@ -73,12 +73,21 @@ class CIJoe
     @current_build.finished_at = Time.now
     @current_build.status = status
     @current_build.output = output
-    @last_build = @current_build
+
+    @old_builds.insert(0,@current_build)
 
     @current_build = nil
     write_build 'current', @current_build
-    write_build 'last', @last_build
-    @last_build.notify if @last_build.respond_to? :notify
+
+    @old_builds.each do |build|
+
+      name = build.finished_at.to_i.to_s
+      write_build name,build unless File.exist? ".git/builds/#{name}"
+
+    end
+    clean_builds
+
+    @old_builds[0].notify if @old_builds[0].respond_to? :notify
   end
 
   # run the build but make sure only
@@ -151,12 +160,12 @@ class CIJoe
   def run_hook(hook)
     if File.exists?(file=".git/hooks/#{hook}") && File.executable?(file)
       data =
-        if @last_build && @last_build.commit
+        if @old_builds[0] && @old_builds[0].commit
           {
-            "MESSAGE" => @last_build.commit.message,
-            "AUTHOR" => @last_build.commit.author,
-            "SHA" => @last_build.commit.sha,
-            "OUTPUT" => @last_build.clean_output
+            "MESSAGE" => @old_builds[0].commit.message,
+            "AUTHOR" => @old_builds[0].commit.author,
+            "SHA" => @old_builds[0].commit.sha,
+            "OUTPUT" => @old_builds[0].clean_output
           }
         else
           {}
@@ -166,10 +175,19 @@ class CIJoe
     end
   end
 
-  # restore current / last build state from disk.
+  # restore current / old build state from disk.
   def restore
-    unless @last_build
-      @last_build = read_build('last')
+    unless @old_builds.count > 0
+      clean_builds
+      builds = []
+      Dir.glob(".git/builds/*") do |file|
+        file = File.basename(file)
+        builds << file unless (file =~/\./ or file.to_i == 0)
+      end
+      builds = builds.sort.reverse
+      builds.each do |file|
+        @old_builds << read_build(file)
+      end
     end
 
     unless @current_build
@@ -197,5 +215,29 @@ class CIJoe
   # load build info from file.
   def read_build(name)
     Build.load(".git/builds/#{name}")
+  end
+
+  #removes builds older than what is set in the config
+  def clean_builds
+    numbuilds = Config.cijoe.buildhistory.to_s.to_i
+    numbuilds = numbuilds == 0 ? 10 : numbuilds
+
+    builds = []
+
+    #old builds saved with thier name as a timestamp
+    Dir.glob(".git/builds/*") do |file|
+      file = File.basename(file)
+      builds << file unless (file =~/\./ or file.to_i == 0)
+    end
+
+    if builds.count > numbuilds
+      #sort and reverse, makes the older builds at the end
+      builds = builds.sort.reverse
+      #remove old builds
+      builds[numbuilds...builds.count].each do |file|
+        File.unlink(".git/builds/#{file}") if File.exist? ".git/builds/#{file}"
+      end
+    end
+
   end
 end
