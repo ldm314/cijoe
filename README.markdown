@@ -61,6 +61,12 @@ Want joe to run against a branch other than `master`? No problem:
 
     $ git config --add cijoe.branch deploy
 
+Build History
+-------------
+
+Want joe to save more or less builds?
+
+    $ git confing --add cijoe.buildhistory 5
 
 Campfire
 --------
