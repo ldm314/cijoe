@@ -43,6 +43,7 @@ class CIJoe
       end
 
       def pretty_time(time)
+        return time if time.nil?
         time.strftime("%Y-%m-%d %H:%M")
       end
 
