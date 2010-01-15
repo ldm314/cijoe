@@ -4,3 +4,6 @@ pkg
 *.tmproj
 tmp/**/*
 tmp/*
+nbproject
+nbproject/**/*
+*.gemspec

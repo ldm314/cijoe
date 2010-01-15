@@ -98,7 +98,7 @@ ul.posts {
 .site {
   font-size: 110%;
   text-align: justify;
-  width: 40em;
+  width: 50em;
   margin: 3em auto 2em auto;
   line-height: 1.5em;
 }
@@ -201,8 +201,10 @@ pre.terminal {
   background-color: #333;
   color: white;
   padding: 5px;
-  overflow: auto;
-  word-wrap: break-word;
+  overflow: scroll;
+  overflow-y: hidden;
+  word-wrap: normal;
+  line-height: 1em;
 }
 
 pre.terminal code {
