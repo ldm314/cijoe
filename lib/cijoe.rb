@@ -240,4 +240,11 @@ class CIJoe
     end
 
   end
+
+  def log_for_time(time)
+    @old_builds.each do |build|
+      return build.output if build.finished_at.to_i.to_s == time.to_s
+    end
+    "Log not available"
+  end
 end

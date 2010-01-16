@@ -4,13 +4,38 @@
     <link href="<%= cijoe_root %>/screen.css" media="screen" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="<%= cijoe_root %>/favicon.ico" type="image/x-icon" />
     <script type="text/javascript">
-      function toggle(id){
-        ID = document.getElementById(id);
+      function toggle(id,timestamp){
+        buildid = "build" + id;
+        logid = "log" + id;
+        url = "/log/" + timestamp;
+
+        ID = document.getElementById(buildid);
         if(ID.style.display == "")
           ID.style.display = "none";
         else
           ID.style.display = "";
+
+        code = document.getElementById(logid)
+        if(code.getAttribute('loaded') == 'false') {
+          code.setAttribute('loaded', 'true')
+          loadXMLDoc(url,logid);
+        }
       }
+      function loadXMLDoc(url,id)
+      {
+        if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+          xmlhttp=new XMLHttpRequest();
+        }
+        else
+        {// code for IE6, IE5
+          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.open("GET",url,false);
+        xmlhttp.send(null);
+        document.getElementById(id).innerHTML=xmlhttp.responseText;
+      }
+</script>
     </script>
     <title><%= h(joe.project) %>: CI Joe</title>
   </head>
@@ -42,11 +67,11 @@
                 <span class="date"><%= pretty_time(build.finished_at) %></span> &raquo; Built <a href="<%= joe.url %>/commits/<%= build.sha %>"><%= build.short_sha %></a>
                 <span class="<%= build.status %>">(<%= build.status %>)</span>
                 <% if build.failed? %>
-                <span> &nbsp; <a href="#" onclick="toggle('<%= "build#{i}" %>')">Show/Hide log</a></span>
+                <span> &nbsp; <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>')">Show/Hide log</a></span>
                 <% end %>
             </li>
             <% if build.failed? %>
-              <li id="<%= "build#{i}" %>" style="display:none;"><pre class="terminal"><code><%=ansi_color_codes h(build.output) %></code></pre><br/></li>
+              <li id="<%= "build#{i}" %>" style="display:none;"><pre class="terminal"><code id="<%= "log#{i}"%>" loaded="false">Loading...</code></pre><br/></li>
             <% end %>
             <% i = i + 1 %>
           <% end %>

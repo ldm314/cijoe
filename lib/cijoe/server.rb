@@ -16,6 +16,10 @@ class CIJoe
       erb(:template, {}, :joe => @joe)
     end
 
+    get '/log/:log_name' do
+      ansi_color_codes(@joe.log_for_time params[:log_name])
+
+    end
     post '/?' do
       payload = params[:payload].to_s
       if payload.empty? || payload.include?(@joe.git_branch)
