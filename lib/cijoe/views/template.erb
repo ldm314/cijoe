@@ -18,7 +18,7 @@
         code = document.getElementById(logid)
         if(code.getAttribute('loaded') == 'false') {
           code.setAttribute('loaded', 'true')
-          loadXMLDoc(url,logid);
+          setTimeout(loadXMLDoc(url,logid),1);
         }
       }
       function loadXMLDoc(url,id)
