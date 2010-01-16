@@ -177,7 +177,7 @@ class CIJoe
 
   # restore current / old build state from disk.
   def restore
-    unless @old_builds.count > 0
+    unless @old_builds.length > 0
       clean_builds
       builds = []
       Dir.glob(".git/builds/*") do |file|
@@ -230,11 +230,11 @@ class CIJoe
       builds << file unless (file =~/\./ or file.to_i == 0)
     end
 
-    if builds.count > numbuilds
+    if builds.length > numbuilds
       #sort and reverse, makes the older builds at the end
       builds = builds.sort.reverse
       #remove old builds
-      builds[numbuilds...builds.count].each do |file|
+      builds[numbuilds...builds.length].each do |file|
         File.unlink(".git/builds/#{file}") if File.exist? ".git/builds/#{file}"
       end
     end
