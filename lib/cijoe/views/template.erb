@@ -64,7 +64,7 @@
           <% i = 0 %>
           <% joe.old_builds.each do |build| %>
             <li>
-                <span class="date"><%= pretty_time(build.finished_at) %></span> &raquo; Built <a href="<%= joe.url %>/commits/<%= build.sha %>"><%= build.short_sha %></a>
+                <span class="date"><%= pretty_time(build.finished_at) %></span> &raquo; Built <a href="<%= joe.url %>/commit/<%= build.sha %>"><%= build.short_sha %></a>
                 <span class="<%= build.status %>">(<%= build.status %>)</span>
                 <% if build.failed? %>
                 <span> &nbsp; <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>')">Show/Hide log</a></span>
