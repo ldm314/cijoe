@@ -74,6 +74,14 @@ class CIJoe
     @current_build.status = status
     @current_build.output = output
 
+    @current_build.total = $1 if output =~ /Total: ([0-9]+)/
+    @current_build.passes = $1 if output =~ /Passed: ([0-9]+)/
+    @current_build.fails = $1 if output =~ /Failed: ([0-9]+)/
+
+    Dir.glob("**/*.txt") do |f|
+      @current_build.faillog = IO.read(f) if f =~ /faillog/
+    end
+
     @old_builds.insert(0,@current_build)
 
     @current_build = nil
@@ -221,7 +229,6 @@ class CIJoe
   def clean_builds
     numbuilds = Config.cijoe.buildhistory.to_s.to_i
     numbuilds = numbuilds == 0 ? 10 : numbuilds
-
     builds = []
 
     #old builds saved with thier name as a timestamp
@@ -234,7 +241,7 @@ class CIJoe
       #sort and reverse, makes the older builds at the end
       builds = builds.sort.reverse
       #remove old builds
-      builds[numbuilds...builds.length].each do |file|
+      builds[(numbuilds)...(builds.length)].each do |file|
         File.unlink(".git/builds/#{file}") if File.exist? ".git/builds/#{file}"
       end
     end
@@ -244,6 +251,13 @@ class CIJoe
   def log_for_time(time)
     @old_builds.each do |build|
       return build.output if build.finished_at.to_i.to_s == time.to_s
+    end
+    "Log not available"
+  end
+
+  def failure_for_time(time)
+    @old_builds.each do |build|
+      return build.faillog if build.finished_at.to_i.to_s == time.to_s and build.faillog.to_s != ""
     end
     "Log not available"
   end

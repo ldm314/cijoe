@@ -1,7 +1,7 @@
 require 'yaml'
 
 class CIJoe
-  class Build < Struct.new(:user, :project, :started_at, :finished_at, :sha, :status, :output, :pid)
+  class Build < Struct.new(:user, :project, :started_at, :finished_at, :sha, :status, :output, :pid, :total, :passes, :fails, :faillog)
     def initialize(*args)
       super
       self.started_at ||= Time.now
@@ -38,7 +38,7 @@ class CIJoe
     end
 
     def dump(file)
-      config = [user, project, started_at, finished_at, sha, status, output, pid]
+      config = [user, project, started_at, finished_at, sha, status, output, pid, total, passes, fails, faillog]
       data = YAML.dump(config)
       File.open(file, 'wb') { |io| io.write(data) }
     end
@@ -46,6 +46,13 @@ class CIJoe
     def self.load(file)
       if File.exist?(file)
         config = YAML.load(File.read(file))
+
+        if config[8].to_s == "" or config[9].to_s == "" or config[10].to_s == ""
+          config[8] = $1 if config[6] =~ /Total: ([0-9]+)/
+          config[9] = $1 if config[6] =~ /Passed: ([0-9]+)/
+          config[10] = $1 if config[6] =~ /Failed: ([0-9]+)/
+        end
+        
         new *config
       end
     end

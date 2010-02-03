@@ -4,17 +4,25 @@
     <link href="<%= cijoe_root %>/screen.css" media="screen" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="<%= cijoe_root %>/favicon.ico" type="image/x-icon" />
     <script type="text/javascript">
-      function toggle(id,timestamp){
-        buildid = "build" + id;
-        logid = "log" + id;
-        url = "/log/" + timestamp;
-
+      function toggle(id,timestamp,logbase){
+        buildid = ""
+        logid = ""
+        url = "/" + logbase + "/" + timestamp
+        if(logbase == 'log') {
+          buildid = "build" + id;
+          logid = "log" + id;
+        } else {
+          buildid = "failure" + id;
+          logid = "faillog" + id;
+        }
         ID = document.getElementById(buildid);
-        if(ID.style.display == "")
+        if(ID.style.display == "") {
           ID.style.display = "none";
-        else
+          return;
+        } else {
           ID.style.display = "";
-
+        }
+        
         code = document.getElementById(logid)
         if(code.getAttribute('loaded') == 'false') {
           code.setAttribute('loaded', 'true')
@@ -66,12 +74,18 @@
             <li>
                 <span class="date"><%= pretty_time(build.finished_at) %></span> &raquo; Built <a href="<%= joe.url %>/commit/<%= build.sha %>"><%= build.short_sha %></a>
                 <span class="<%= build.status %>">(<%= build.status %>)</span><span>&nbsp;in <%= "%.2f" % (build.finished_at.to_f - build.started_at.to_f) %> Seconds</span>
+                <span>(</span>
+                <span class="total"> <%= "#{build.total}" %> : </span>
+                <span class="pass"> <%= "#{build.passes}" %> : </span>
+                <span class="fail"> <%= "#{build.fails}" %> </span>
+                <span>)</span>
                 <% if build.failed? %>
-                <span> &nbsp; <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>')">Show/Hide log</a></span>
+                <span class="showlog"> &nbsp; Show/Hide: <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>','log')">Output</a>  <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>','logfail')">Failures</a></span>
                 <% end %>
             </li>
             <% if build.failed? %>
               <li id="<%= "build#{i}" %>" style="display:none;"><pre class="terminal"><code id="<%= "log#{i}"%>" loaded="false">Loading...</code></pre><br/></li>
+              <li id="<%= "failure#{i}" %>" style="display:none;"><pre class="terminal"><code id="<%= "faillog#{i}"%>" loaded="false">Loading...</code></pre><br/></li>
             <% end %>
             <% i = i + 1 %>
           <% end %>
