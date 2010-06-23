@@ -8,12 +8,12 @@ begin
   require 'cijoe/version'
 
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "ldm314-cijoe"
+    gemspec.name = "rhomobile-cijoe"
     gemspec.summary = "CI Joe is a simple Continuous Integration server."
     gemspec.description = "CI Joe is a simple Continuous Integration server."
-    gemspec.email = "chris@ozmm.org"
+    gemspec.email = "dev@rhomobile.com"
     gemspec.homepage = "http://github.com/ldm314/cijoe"
-    gemspec.authors = ["Chris Wanstrath", "Brian Moore"]
+    gemspec.authors = ["Chris Wanstrath", "Brian Moore", "Lars Burgess"]
     gemspec.add_dependency 'choice'
     gemspec.add_dependency 'sinatra'
     gemspec.add_dependency 'systemu'
