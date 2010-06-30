@@ -60,7 +60,8 @@ class CIJoe
     end
     
     def mail_body
-      "The commit '#{commit.message}' (#{commit.url}) by #{commit.author} caused the build to fail."
+      body = "The commit '#{commit.message}' (#{commit.url}) by #{commit.author} caused the build to fail."
+      body += "\n\nFail log:\n\n#{faillog}"
     end
   end
 end
