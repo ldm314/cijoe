@@ -26,6 +26,11 @@ class CIJoe
 
     end
 
+    get '/status' do
+
+      erb(:statusTemplate, {}, :build => @joe.old_builds[0])
+     
+    end
 
 
     post '/?' do
