@@ -1,12 +1,12 @@
-    <li>
-        <span class="date"><%= pretty_time(build.finished_at) %></span> &raquo; Built <a href="<%= joe.url %>/commit/<%= build.sha %>"><%= build.short_sha %></a>
-        <span class="<%= build.status %>">(<%= build.status %>)</span><span>&nbsp;in <%= "%.2f" % (build.finished_at.to_f - build.started_at.to_f) %> Seconds</span>
-        <span>(</span>
-        <span class="total"> <%= "#{build.total}" %> : </span>
-        <span class="pass"> <%= "#{build.passes}" %> : </span>
-        <span class="fail"> <%= "#{build.fails}" %> </span>
-        <span>)</span>
-        <% if build.failed? %>
-        <span class="showlog"> &nbsp; Show/Hide: <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>','log')">Output</a>  <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>','logfail')">Failures</a></span>
-        <% end %>
-    </li>
+<li>
+    <span class="date"><%= pretty_time(build.finished_at) %></span> &raquo; Built <a href="<%= joe.url %>"><%= joe.project %></a> <a href="<%= joe.url %>/commit/<%= build.sha %>"><%= build.short_sha %></a>
+    <span class="<%= build.status %>">(<%= build.status %>)</span><span>&nbsp;in <%= "%.2f" % (build.finished_at.to_f - build.started_at.to_f) %> Seconds</span>
+    <span>(</span>
+    <span class="total"> <%= "#{build.total}" %> : </span>
+    <span class="pass"> <%= "#{build.passes}" %> : </span>
+    <span class="fail"> <%= "#{build.fails}" %> </span>
+    <span>)</span>
+    <% if build.failed? %>
+    <span class="showlog"> &nbsp; Show/Hide: <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>','log')">Output</a>  <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>','logfail')">Failures</a></span>
+    <% end %>
+</li>

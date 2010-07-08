@@ -32,6 +32,12 @@ class CIJoe
      
     end
 
+    # Give access to any and all joe methods
+    get '/method/:joeProperty' do
+
+      @joe.send(params[:joeProperty])
+
+    end
 
     post '/?' do
       payload = params[:payload].to_s
