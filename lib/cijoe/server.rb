@@ -28,7 +28,7 @@ class CIJoe
 
     get '/status' do
 
-      erb(:statusTemplate, {}, :joe => @joe, :build => @joe.old_builds[0])
+      erb(:statusTemplate, {}, :joe => @joe, :build => (@joe.building? ? @joe.current_build : @joe.old_builds[0]) )
      
     end
 

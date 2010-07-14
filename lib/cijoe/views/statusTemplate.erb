@@ -1,12 +1,30 @@
-<% if build.failed? %>
-  <img src="/red_bl.gif" style="height:16px">
-<% else %>
-  <img src="/green.gif" style="height:16px">
+<%
+if build.failed?
+  @image = "/red_bl.gif"
+  @time = pretty_time(build.finished_at)
+  @duration = "in %.2f" % (build.finished_at.to_f - build.started_at.to_f)
+
+elsif build.worked?
+  @image = "/green.gif"
+  @time = pretty_time(build.finished_at)
+  @duration = "in %.2f" % (build.finished_at.to_f - build.started_at.to_f)
+
+else
+  @image = "/green_off.gif"
+  @time = pretty_time(build.started_at)
+  @duration = "for %.2f" % (Time.now - build.started_at.to_f)
+
+end
+%>
+
+<img src="<%= @image %>" style="height:16px; position:relative; top:3px">
+<span class="date"><%= @time %></span> &raquo; Build <a href="<%= joe.url %>/commit/<%= build.sha %>"><%= build.short_sha %></a>
+<span class="<%= build.status %>">(<%= build.status %>)</span><span>&nbsp;<%= @duration %> seconds</span>
+
+<% if build.failed? or build.worked? %>
+  <span>(</span>
+  <span class="total"> <%= "#{build.total}" %> : </span>
+  <span class="pass"> <%= "#{build.passes}" %> : </span>
+  <span class="fail"> <%= "#{build.fails}" %> </span>
+  <span>)</span>
 <% end %>
-<span class="date"><%= pretty_time(build.finished_at) %></span> &raquo; Build <a href="<%= joe.url %>/commit/<%= build.sha %>"><%= build.short_sha %></a>
-<span class="<%= build.status %>">(<%= build.status %>)</span><span>&nbsp;in <%= "%.2f" % (build.finished_at.to_f - build.started_at.to_f) %> Seconds</span>
-<span>(</span>
-<span class="total"> <%= "#{build.total}" %> : </span>
-<span class="pass"> <%= "#{build.passes}" %> : </span>
-<span class="fail"> <%= "#{build.fails}" %> </span>
-<span>)</span>
