@@ -95,7 +95,16 @@ class CIJoe
     end
     clean_builds
 
-    @old_builds[0].notify if @old_builds[0].respond_to? :notify
+    # Send email notifications if this build failed, or this build
+    # worked after the last one failed
+    if @old_builds[0].failed?
+      @old_builds[0].notify_fail
+    end
+
+    if @old_builds[0].worked? && @old_builds[1].failed?
+      @old_builds[0].notify_recover
+    end
+
   end
 
   # run the build but make sure only

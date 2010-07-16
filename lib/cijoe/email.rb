@@ -3,6 +3,9 @@ require File.dirname(__FILE__) + '/../mmmail'
 class CIJoe
   module Email
     def self.activate
+
+      # If the user supplied a valid email configuration, make the Build module
+      # include this Email module
       if valid_config?
         CIJoe::Build.class_eval do
           include CIJoe::Email
@@ -39,14 +42,24 @@ class CIJoe
       end
     end
 
-    def notify
-      options = {
+    def notify_fail
+      fail_options = {
         :to => Email.config[:to],
         :from => Email.config[:to],
         :subject => "(#{project}) Build failed",
-        :body => mail_body
+        :body => "The commit '#{commit.message}' (#{commit.url}) by #{commit.author} caused the build to fail.\n\nFail log:\n\n#{faillog}"
       }
-      MmMail.mail(options, mail_config) if failed?
+      MmMail.mail(fail_options, mail_config)
+    end
+
+    def notify_recover
+      recover_options = {
+        :to => Email.config[:to],
+        :from => Email.config[:to],
+        :subject => "(#{project}) Build recovered",
+        :body => "The commit '#{commit.message}' (#{commit.url}) by #{commit.author} fixed the build."
+      }
+      MmMail.mail(recover_options, mail_config)
     end
 
     def mail_config
@@ -59,9 +72,5 @@ class CIJoe
       config
     end
     
-    def mail_body
-      body = "The commit '#{commit.message}' (#{commit.url}) by #{commit.author} caused the build to fail."
-      body += "\n\nFail log:\n\n#{faillog}"
-    end
   end
 end
