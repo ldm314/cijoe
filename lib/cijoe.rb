@@ -97,11 +97,11 @@ class CIJoe
 
     # Send email notifications if this build failed, or this build
     # worked after the last one failed
-    if @old_builds[0].failed?
+    if @old_builds[0].failed? && @old_builds[0].respond_to? :notify_fail
       @old_builds[0].notify_fail
     end
 
-    if @old_builds[0].worked? && @old_builds[1].failed?
+    if @old_builds[0].worked? && @old_builds[1].failed? && @old_builds[0].respond_to? :notify_recover
       @old_builds[0].notify_recover
     end
 
