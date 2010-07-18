@@ -32,8 +32,7 @@ class CIJoe
       # Otherwise, render it with old_builds[0]
       erb(:statusTemplate, {},
         :joe => @joe,
-        :build => (@joe.building? ? @joe.current_build : @joe.old_builds[0]),
-        :url => CIJoe::Server.host.to_s + ":" + CIJoe::Server.port.to_s )
+        :build => (@joe.building? ? @joe.current_build : @joe.old_builds[0]) )
      
     end
 

@@ -1,16 +1,16 @@
 <%
 if build.failed?
-  @image = "http://" + url + "/red_bl.gif"
+  @image = "http://" + request.env["HTTP_HOST"] + "/red_bl.gif"
   @time = pretty_time(build.finished_at)
   @duration = "in %.2f" % (build.finished_at.to_f - build.started_at.to_f)
 
 elsif build.worked?
-  @image = "http://" + url + "/green.gif"
+  @image = "http://" + request.env["HTTP_HOST"] + "/green.gif"
   @time = pretty_time(build.finished_at)
   @duration = "in %.2f" % (build.finished_at.to_f - build.started_at.to_f)
 
 else
-  @image = "http://" + url + "/green_off.gif"
+  @image = "http://" + request.env["HTTP_HOST"] + "/green_off.gif"
   @time = pretty_time(build.started_at)
   @duration = "for %.2f" % (Time.now - build.started_at.to_f)
 
