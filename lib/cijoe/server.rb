@@ -84,13 +84,14 @@ class CIJoe
     def initialize(*args)
       super
       check_project
-      @joe = CIJoe.new(options.project_path)
+      @joe = CIJoe.new(options.project_path, options.runner)
 
       CIJoe::Email.activate
     end
 
-    def self.start(host, port, project_path)
+    def self.start(host, port, runner, project_path)
       set :project_path, project_path
+      set :runner, runner
       CIJoe::Server.run! :host => host, :port => port
     end
 

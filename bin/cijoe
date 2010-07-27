@@ -26,6 +26,14 @@ Choice.options do
     default d
   end
 
+  option :runner do
+    d = "Config.cijoe.runner.to_s"
+    short '-r'
+    long '--runner=RUNNER'
+    desc "The path to the git config option for testing the build (default #{d})"
+    default d
+  end
+
   separator ''
   separator 'Common options: '
 
@@ -46,4 +54,4 @@ Choice.options do
 end
 
 options = Choice.choices
-CIJoe::Server.start(options[:host], options[:port], Choice.rest[0])
+CIJoe::Server.start(options[:host], options[:port], options[:runner], Choice.rest[0])

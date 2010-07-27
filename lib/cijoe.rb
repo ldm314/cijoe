@@ -27,9 +27,9 @@ require 'cijoe/email'
 require 'cijoe/server'
 
 class CIJoe
-  attr_reader :user, :project, :url, :current_build, :old_builds
+  attr_reader :user, :project, :url, :current_build, :old_builds, :runner
 
-  def initialize(project_path)
+  def initialize(project_path, runner)
     project_path = File.expand_path(project_path)
     Dir.chdir(project_path)
 
@@ -38,6 +38,8 @@ class CIJoe
 
     @old_builds = []
     @current_build = nil
+
+    @runner = runner
 
     trap("INT") { stop }
   end
@@ -151,7 +153,7 @@ class CIJoe
 
   # shellin' out
   def runner_command
-    runner = Config.cijoe.runner.to_s
+    runner = eval(@runner)
     runner == '' ? "rake -s test:units" : runner
   end
 
