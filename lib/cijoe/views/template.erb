@@ -79,12 +79,14 @@
                 <span class="pass"> <%= "#{build.passes}" %> : </span>
                 <span class="fail"> <%= "#{build.fails}" %> </span>
                 <span>)</span>
+                <span class="showlog"> &nbsp; Show/Hide: <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>','log')">Output</a>
                 <% if build.failed? %>
-                <span class="showlog"> &nbsp; Show/Hide: <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>','log')">Output</a>  <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>','logfail')">Failures</a></span>
+                  <a href="#" onclick="toggle('<%= i.to_s %>','<%= build.finished_at.to_i.to_s %>','logfail')">Failures</a>
                 <% end %>
+                </span>
             </li>
+            <li id="<%= "build#{i}" %>" style="display:none;"><pre class="terminal"><code id="<%= "log#{i}"%>" loaded="false">Loading...</code></pre><br/></li>
             <% if build.failed? %>
-              <li id="<%= "build#{i}" %>" style="display:none;"><pre class="terminal"><code id="<%= "log#{i}"%>" loaded="false">Loading...</code></pre><br/></li>
               <li id="<%= "failure#{i}" %>" style="display:none;"><pre class="terminal"><code id="<%= "faillog#{i}"%>" loaded="false">Loading...</code></pre><br/></li>
             <% end %>
             <% i = i + 1 %>

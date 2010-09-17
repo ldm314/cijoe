@@ -76,9 +76,9 @@ class CIJoe
     @current_build.status = status
     @current_build.output = output
 
-    @current_build.total = $1 if output =~ /Agg Total: ([0-9]+)/
-    @current_build.passes = $1 if output =~ /Agg Passed: ([0-9]+)/
-    @current_build.fails = $1 if output =~ /Agg Failed: ([0-9]+)/
+    @current_build.total = $1 if ( output =~ /Agg Total: ([0-9]+)/ || output =~ /Total: ([0-9]+)/ )
+    @current_build.passes = $1 if ( output =~ /Agg Passed: ([0-9]+)/ || output =~ /Passed: ([0-9]+)/ )
+    @current_build.fails = $1 if ( output =~ /Agg Failed: ([0-9]+)/ || output =~ /Failed: ([0-9]+)/ )
 
     Dir.glob("**/*.txt") do |f|
       @current_build.faillog = IO.read(f) if f =~ /faillog/
