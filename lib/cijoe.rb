@@ -162,7 +162,8 @@ class CIJoe
   end
 
   def git_update
-    `git fetch origin && git reset --hard origin/#{git_branch}`
+    `git fetch origin`
+    `git reset origin/#{git_branch}`
     run_hook "after-reset"
   end
 
